@@ -379,6 +379,15 @@ struct KasetApp: App {
                 .environment(self.equalizerService)
         }
         .commands {
+            CommandMenu(String(localized: "Appearance")) {
+                Picker(String(localized: "Appearance"), selection: self.$settings.appearance) {
+                    ForEach(AppAppearance.allCases) { appearance in
+                        Text(appearance.displayName).tag(appearance)
+                    }
+                }
+                .pickerStyle(.inline)
+            }
+
             // Check for Updates command in app menu
             CommandGroup(after: .appInfo) {
                 Button(String(localized: "Check for Updates...")) {
