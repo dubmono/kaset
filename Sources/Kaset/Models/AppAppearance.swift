@@ -6,7 +6,9 @@ enum AppAppearance: String, CaseIterable, Identifiable {
     case light
     case dark
 
-    var id: String { self.rawValue }
+    var id: String {
+        self.rawValue
+    }
 
     var displayName: String {
         switch self {
