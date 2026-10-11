@@ -1,4 +1,3 @@
-import AppKit
 import Foundation
 import Observation
 
@@ -245,19 +244,16 @@ final class SettingsManager {
         }
     }
 
-    /// App-wide override. A nil AppKit appearance keeps tracking the system.
+    // MARK: - Settings Properties
+
+    /// App-wide light/dark override; `.system` follows macOS.
     var appearance: AppAppearance {
         didSet {
+            guard self.appearance != oldValue else { return }
             UserDefaults.standard.set(self.appearance.rawValue, forKey: Keys.appearance)
-            self.applyAppearance()
+            self.appearance.apply()
         }
     }
-
-    func applyAppearance() {
-        NSApplication.shared.appearance = self.appearance.nsAppearance
-    }
-
-    // MARK: - Settings Properties
 
     /// The active content source (YouTube Music or regular YouTube).
     var appSource: AppSource {
@@ -526,9 +522,13 @@ final class SettingsManager {
         defaults.object(forKey: Keys.showYouTubeControlsOnVideo) as? Bool ?? false
     }
 
+    static func loadAppearance(from defaults: UserDefaults) -> AppAppearance {
+        defaults.string(forKey: Keys.appearance).flatMap(AppAppearance.init(rawValue:)) ?? .system
+    }
+
     private init() {
-        self.appearance = AppAppearance.load(from: UserDefaults.standard)
         // Load persisted settings or use defaults
+        self.appearance = Self.loadAppearance(from: UserDefaults.standard)
         self.showNowPlayingNotifications = UserDefaults.standard.object(forKey: Keys.showNowPlayingNotifications) as? Bool ?? true
         self.hapticFeedbackEnabled = UserDefaults.standard.object(forKey: Keys.hapticFeedbackEnabled) as? Bool ?? true
         self.rememberPlaybackSettings = UserDefaults.standard.object(forKey: Keys.rememberPlaybackSettings) as? Bool ?? false

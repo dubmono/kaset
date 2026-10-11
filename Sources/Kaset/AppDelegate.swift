@@ -46,7 +46,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private var isPreparingTermination = false
 
     func applicationWillFinishLaunching(_: Notification) {
-        SettingsManager.shared.applyAppearance()
+        SettingsManager.shared.appearance.apply()
     }
 
     func applicationDidFinishLaunching(_: Notification) {

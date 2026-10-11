@@ -12,7 +12,12 @@ enum AppAppearance: String, CaseIterable, Identifiable {
 
     var displayName: String {
         switch self {
-        case .system: String(localized: "System Default")
+        case .system:
+            String(
+                localized: "Match System",
+                bundle: AppLocalization.bundle,
+                comment: "Appearance option that follows the macOS light or dark setting"
+            )
         case .light: String(localized: "Light Mode")
         case .dark: String(localized: "Dark Mode")
         }
@@ -26,9 +31,9 @@ enum AppAppearance: String, CaseIterable, Identifiable {
         }
     }
 
+    /// Applies this preference app-wide. A nil AppKit appearance keeps tracking the system.
     @MainActor
-    static func load(from defaults: UserDefaults) -> Self {
-        defaults.string(forKey: SettingsManager.Keys.appearance)
-            .flatMap(Self.init(rawValue:)) ?? .system
+    func apply() {
+        NSApplication.shared.appearance = self.nsAppearance
     }
 }
